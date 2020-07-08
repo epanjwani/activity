@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from django.test import TestCase
-from formlibrary.models import Individual, Training
+from formlibrary.models import Individual
 
 
 class IndividualTestCase(TestCase):
@@ -17,7 +17,6 @@ class IndividualTestCase(TestCase):
     ]
 
     def setUp(self):
-        training = Training.objects.first()
         individual = Individual.objects.create(
             first_name="JoeFirst", last_name="JoeLast", age="42",
             sex="Male", signature=False)

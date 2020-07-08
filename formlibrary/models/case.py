@@ -4,7 +4,7 @@
 import uuid
 from datetime import datetime
 from django.db import models
-from workflow.models import Program, SiteProfile, Country
+from workflow.models import SiteProfile, Country
 
 
 class Case(models.Model):
@@ -75,8 +75,8 @@ class Individual(models.Model):
     id_number = models.CharField(max_length=255, null=True, blank=True)
     primary_number = models.IntegerField(null=True, blank=True)
     secondary_number = models.IntegerField(null=True, blank=True)
-    site = models.ForeignKey(SiteProfile, null=True,
-        blank=True, on_delete=models.SET_NULL)
+    site = models.ForeignKey(
+        SiteProfile, null=True, blank=True, on_delete=models.SET_NULL)
     signature = models.BooleanField(default=True)
     photo = models.ImageField(upload_to='', null=True, blank=True)
     # remarks = models.TextField(max_length=550, null=True, blank=True)
