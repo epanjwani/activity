@@ -19,13 +19,12 @@ class IndividualTestCase(TestCase):
     def setUp(self):
         training = Training.objects.first()
         individual = Individual.objects.create(
-            first_name="Joe Test", father_name="Mr Test", age="42",
-            gender="male", signature=False, remarks="life")
-        individual.training.add(training)
+            first_name="JoeFirst", last_name="JoeLast", age="42",
+            sex="Male", signature=False)
         individual.save()
 
     def test_individual_exists(self):
         """Check for the Individual object"""
-        get_individual = Individual.objects.get(first_name="Joe Test")
+        get_individual = Individual.objects.get(first_name="JoeFirst")
         self.assertEqual(Individual.objects.filter(
             id=get_individual.id).count(), 1)
