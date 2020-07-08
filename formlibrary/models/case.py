@@ -4,7 +4,7 @@
 import uuid
 from datetime import datetime
 from django.db import models
-from workflow.models import Program, SiteProfile
+from workflow.models import Program, SiteProfile, Country
 
 
 class Case(models.Model):
@@ -23,8 +23,34 @@ class Household(Case):
     Family, or group of people, living together
     Spec: https://github.com/hikaya-io/activity/issues/409
     """
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    individuals = models.ForeignKey('Individual', null=True, blank=True, on_delete=models.SET_NULL)
+    #address = 
+    street_address = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    postal_code = models.CharField(max_length=12, null=True, blank=True)
+    country = models.ForeignKey(
+        Country, blank=True, null=True, on_delete=models.SET_NULL)
+    primary_number = models.IntegerField(null=True, blank=True)
+    secondary_number = models.IntegerField(null=True, blank=True)
+    email = models.CharField("Email", max_length=255, blank=True, null=True)
+    create_date = models.DateTimeField(null=True, blank=True)
+    edit_date = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        ordering = ('name',)
+
+    # on save add create date or update edit date
+    def save(self, *args, **kwargs):
+        if self.create_date is None:
+            self.create_date = datetime.now()
+        self.edit_date = datetime.now()
+        super(Household, self).save(*args, **kwargs)
+
+    def __str__(self):
+        if self.name is None:
+            return "NULL"
+        return self.name
 
 class Individual(models.Model):
     """
@@ -32,21 +58,35 @@ class Individual(models.Model):
     Subject to future changes: https://github.com/hikaya-io/activity/issues/403
     Also, will inherit from Case (subject to research/discussion)
     """
+    SEX_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female')
+    )
     first_name = models.CharField(max_length=255, null=True, blank=True)
-    training = models.ManyToManyField("formlibrary.training", blank=True)
-    distribution = models.ManyToManyField("formlibrary.distribution", blank=True)
-    father_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    #training = models.ManyToManyField("formlibrary.training", blank=True)
+    #distribution = models.ManyToManyField("formlibrary.distribution", blank=True)
+    #father_name = models.CharField(max_length=255, null=True, blank=True)
+    sex = models.CharField(choices=SEX_CHOICES, max_length=255, null=True, blank=True)
     age = models.IntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=255, null=True, blank=True)
+    date_of_birth = models.DateTimeField(null=True, blank=True)
+    household_id = models.ForeignKey(
+        Household, null=True, blank=True, on_delete=models.SET_NULL)
+    head_of_household = models.BooleanField(default=True)
+    id_type = models.CharField(max_length= 255, null=True, blank=True)
+    id_number = models.CharField(max_length= 255, null=True, blank=True)
+    primary_number = models.IntegerField(null=True, blank=True)
+    secondary_number = models.IntegerField(null=True, blank=True)
     site = models.ForeignKey(SiteProfile, null=True,
-                             blank=True, on_delete=models.SET_NULL)
+                              blank=True, on_delete=models.SET_NULL)
     signature = models.BooleanField(default=True)
-    remarks = models.TextField(max_length=550, null=True, blank=True)
-    program = models.ManyToManyField(Program, blank=True)
+    photo = models.ImageField(upload_to='', null=True, blank=True)
+    #remarks = models.TextField(max_length=550, null=True, blank=True)
+    #program = models.ManyToManyField(Program, blank=True)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
-    household = models.ForeignKey(
-        Household, null=True, blank=True, on_delete=models.SET_NULL)
+    # created_by = 
+    # modified_by =
 
     class Meta:
         ordering = ('first_name',)
