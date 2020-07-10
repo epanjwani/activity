@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
 from workflow.models import SiteProfile, Country, Program
-from utils.models import CreatedModifiedBy, CreatedModifiedDates
+from utils.models import CreatedModifiedBy
 from datetime import datetime
 
 
@@ -16,7 +16,7 @@ class Case(models.Model):
     label = models.CharField(max_length=255)
 
 
-class Household(Case, CreatedModifiedBy, CreatedModifiedDates):
+class Household(Case, CreatedModifiedBy):
     """
     Family, or group of people, living together
     Spec: https://github.com/hikaya-io/activity/issues/409
@@ -51,7 +51,7 @@ class Household(Case, CreatedModifiedBy, CreatedModifiedDates):
         return self.name
 
 
-class Individual(Case, CreatedModifiedBy, CreatedModifiedDates):
+class Individual(Case, CreatedModifiedBy):
     """
     Individual, or person.
     Subject to future changes: https://github.com/hikaya-io/activity/issues/403
