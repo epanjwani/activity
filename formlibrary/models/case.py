@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from workflow.models import SiteProfile, Country
 from utils.models import CreatedModifiedDates
+from datetime import datetime
 
 
 class Case(models.Model):
