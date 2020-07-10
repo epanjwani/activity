@@ -1,7 +1,7 @@
 import uuid
 from django.db import models
-from workflow.models import SiteProfile, Country
-from utils.models import CreatedModifiedDates
+from workflow.models import SiteProfile, Country, Program
+from utils.models import CreatedModifiedBy, CreatedModifiedDates
 from datetime import datetime
 
 
@@ -16,7 +16,7 @@ class Case(models.Model):
     label = models.CharField(max_length=255)
 
 
-class Household(Case):
+class Household(Case, CreatedModifiedBy, CreatedModifiedDates):
     """
     Family, or group of people, living together
     Spec: https://github.com/hikaya-io/activity/issues/409
@@ -51,7 +51,7 @@ class Household(Case):
         return self.name
 
 
-class Individual(CreatedModifiedDates):
+class Individual(Case, CreatedModifiedBy, CreatedModifiedDates):
     """
     Individual, or person.
     Subject to future changes: https://github.com/hikaya-io/activity/issues/403
@@ -77,8 +77,9 @@ class Individual(CreatedModifiedDates):
         SiteProfile, null=True, blank=True, on_delete=models.SET_NULL)
     signature = models.BooleanField(default=True)
     photo = models.ImageField(upload_to='', null=True, blank=True)
-    # remarks = models.TextField(max_length=550, null=True, blank=True)
-    # program = models.ManyToManyField(Program, blank=True)
+    description = models.TextField(max_length=550, null=True, blank=True)
+    program = models.ForeignKey(
+        Program, null=True, blank=True, on_delete=models.SET_NULL)
     create_date = models.DateTimeField(null=True, blank=True)
     edit_date = models.DateTimeField(null=True, blank=True)
     # created_by =
